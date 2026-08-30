@@ -9,7 +9,7 @@ const regional = (event: any) => {
 const source = (sourceId: string, urls: string[], confidence = 0.9) =>
   createStructuredHtmlAdapter({ sourceId, listingUrls: () => urls, extractor: extractJsonLdEvents, confidence, filter: regional });
 
-export const southBendVpaAdapter = source('south-bend-vpa', ['https://sbvpa.org/events/'], 0.93);
+export const southBendVpaAdapter = source('south-bend-vpa', ['https://sbvpa.org/things-to-do/'], 0.93);
 export const debartoloAdapter = source('debartolo-performing-arts-center', ['https://performingarts.nd.edu/events/'], 0.94);
 export const morrisAdapter = source('morris-performing-arts-center', ['https://morriscenter.org/events/'], 0.94);
 export const civicTheatreAdapter = source('south-bend-civic-theatre', ['https://sbct.org/events/'], 0.92);
