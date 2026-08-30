@@ -31,12 +31,19 @@ function parseNotreDameStart(timeText: string | null, href: string | null): stri
   if (meridiem === 'pm' && hour !== 12) hour += 12;
   if (meridiem === 'am' && hour === 12) hour = 0;
 
-  // Notre Dame is in Eastern Time. Store an unambiguous ISO instant by using a
-  // fixed EDT offset during the normal event season; downstream normalization
-  // can refine DST handling with a timezone-aware parser before production.
   const localIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00-04:00`;
   const parsed = new Date(localIso);
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
+function metaText(block: string, classToken: string): string | null {
+  for (const tag of ['div', 'li', 'p', 'span']) {
+    const match = blocks(block, tag, classToken)[0];
+    if (match) {
+      return stripTags(match).replace(/^\s*(?:Time|Location|Date):\s*/i, '').trim();
+    }
+  }
+  return null;
 }
 
 export const extractNotreDameEvents: HtmlExtractor = (html, pageUrl): ExtractedHtmlEvent[] => {
@@ -50,9 +57,8 @@ export const extractNotreDameEvents: HtmlExtractor = (html, pageUrl): ExtractedH
   for (const block of eventBlocks) {
     const title = firstMatch(block, /<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>/i) || firstMatch(block, /class=["'][^"']*(?:event-title|title)[^"']*["'][^>]*>([\s\S]*?)<\//i);
     const href = absoluteUrl(pageUrl, firstHref(block, /\/events\/\d{4}\/\d{2}\/\d{2}\//i) || firstHref(block));
-    const timeText = firstMatch(block, /class=["'][^"']*event-time[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i);
-    const location = firstMatch(block, /class=["'][^"']*event-location[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i)
-      || firstMatch(block, /class=["'][^"']*(?:location|venue)[^"']*["'][^>]*>([\s\S]*?)<\//i);
+    const timeText = metaText(block, 'event-time');
+    const location = metaText(block, 'event-location') || metaText(block, 'venue');
     const text = stripTags(block);
     const start = parseNotreDameStart(timeText, href);
     if (!title || !href || !start) continue;
