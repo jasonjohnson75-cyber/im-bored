@@ -16,6 +16,19 @@ async function fetchText(url: string): Promise<{ status: number; text: string }>
   return { status: response.status, text: await response.text() };
 }
 
+function diagnostics(html: string) {
+  const classNames = [...html.matchAll(/class=["']([^"']+)["']/gi)]
+    .map((match) => match[1])
+    .filter((value) => /(event|date|time|location|venue|calendar|card|list)/i.test(value));
+  const uniqueClasses = [...new Set(classNames)].slice(0, 40);
+  const eventHrefPrefixes = [...html.matchAll(/href=["']([^"']+)["']/gi)]
+    .map((match) => match[1])
+    .filter((value) => /event/i.test(value))
+    .map((value) => value.replace(/[?#].*$/, '').replace(/\/[^/]+\/?$/, '/'));
+  const uniqueHrefPrefixes = [...new Set(eventHrefPrefixes)].slice(0, 20);
+  console.log(`LIVE_DIAGNOSTICS ${JSON.stringify({ uniqueClasses, uniqueHrefPrefixes })}`);
+}
+
 function summarize(name: string, status: number, htmlBytes: number, extracted: ReturnType<typeof extractNotreDameEvents>) {
   const summary = {
     source: name,
@@ -40,6 +53,7 @@ describe('Wave 1 live-source dry run', () => {
     const { status, text } = await fetchText(url);
     const events = extractNotreDameEvents(text, url);
     summarize('notre-dame-events', status, text.length, events);
+    if (events.length === 0) diagnostics(text);
     expect(status).toBeGreaterThanOrEqual(200);
     expect(status).toBeLessThan(400);
     expect(text.length).toBeGreaterThan(1000);
@@ -64,6 +78,7 @@ describe('Wave 1 live-source dry run', () => {
     const { status, text } = await fetchText(url);
     const events = extractSouthBendCubsEvents(text, url);
     summarize('south-bend-cubs', status, text.length, events);
+    if (events.length === 0) diagnostics(text);
     expect(status).toBeGreaterThanOrEqual(200);
     expect(status).toBeLessThan(400);
     expect(text.length).toBeGreaterThan(1000);
