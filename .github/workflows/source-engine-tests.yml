@@ -1,0 +1,24 @@
+name: Source Engine Tests
+
+on:
+  push:
+    paths:
+      - 'source-engine/**'
+      - 'package.json'
+      - '.github/workflows/source-engine-tests.yml'
+  pull_request:
+    paths:
+      - 'source-engine/**'
+      - 'package.json'
+
+jobs:
+  fixture-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm install
+      - run: npm run test:source-engine
