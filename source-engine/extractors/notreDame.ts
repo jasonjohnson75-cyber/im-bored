@@ -40,8 +40,6 @@ function parseNotreDameStart(timeText: string | null, href: string | null, dateT
   if (meridiem === 'pm' && hour !== 12) hour += 12;
   if (meridiem === 'am' && hour === 12) hour = 0;
 
-  // Verification-stage conversion. Production normalization will replace this
-  // with timezone-aware DST handling using America/Indiana/Indianapolis.
   const localIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00-04:00`;
   const parsed = new Date(localIso);
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
@@ -58,6 +56,12 @@ function metaText(block: string, classToken: string): string | null {
   return stripTags(match[1]).replace(/^\s*(?:Time|Location|Date):\s*/i, '').trim();
 }
 
+function labeledValue(text: string, label: 'Time' | 'Location'): string | null {
+  const boundary = label === 'Time' ? 'Location' : '(?:Date|$)';
+  const match = text.match(new RegExp(`${label}:\\s*(.*?)(?=\\s+${boundary}:?|$)`, 'i'));
+  return match?.[1]?.trim() || null;
+}
+
 export const extractNotreDameEvents: HtmlExtractor = (html, pageUrl): ExtractedHtmlEvent[] => {
   const eventBlocks = [
     ...blocks(html, 'article', 'event'),
@@ -70,10 +74,10 @@ export const extractNotreDameEvents: HtmlExtractor = (html, pageUrl): ExtractedH
     const title = firstMatch(block, /<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>/i)
       || firstMatch(block, /class=["'][^"']*(?:event-title|title)[^"']*["'][^>]*>([\s\S]*?)<\//i);
     const href = absoluteUrl(pageUrl, firstHref(block, /\/events\/\d{4}\/\d{2}\/\d{2}\//i) || firstHref(block));
-    const dateText = metaText(block, 'event-date');
-    const timeText = metaText(block, 'event-time');
-    const location = metaText(block, 'event-location') || metaText(block, 'venue');
     const text = stripTags(block);
+    const dateText = metaText(block, 'event-date');
+    const timeText = metaText(block, 'event-time') || labeledValue(text, 'Time');
+    const location = metaText(block, 'event-location') || metaText(block, 'venue') || labeledValue(text, 'Location');
     const start = parseNotreDameStart(timeText, href, dateText);
     if (!title || !href || !start) continue;
     const externalId = new URL(href).pathname.replace(/\/$/, '') || href;
