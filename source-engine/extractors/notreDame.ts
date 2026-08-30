@@ -1,5 +1,43 @@
 import type { HtmlExtractor, ExtractedHtmlEvent } from '../adapters/structuredHtml';
-import { absoluteUrl, blocks, firstHref, firstMatch, parseLocalDateTime, statusFromText, stripTags } from './htmlPrimitives';
+import { absoluteUrl, blocks, firstHref, firstMatch, statusFromText, stripTags } from './htmlPrimitives';
+
+function parseNotreDameStart(timeText: string | null, href: string | null): string | null {
+  if (!timeText) return null;
+
+  const hrefDate = href?.match(/\/events\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  const year = hrefDate ? Number(hrefDate[1]) : new Date().getFullYear();
+  const monthFromHref = hrefDate ? Number(hrefDate[2]) : null;
+  const dayFromHref = hrefDate ? Number(hrefDate[3]) : null;
+
+  if (/all day/i.test(timeText) && monthFromHref && dayFromHref) {
+    return new Date(Date.UTC(year, monthFromHref - 1, dayFromHref, 0, 0, 0)).toISOString();
+  }
+
+  const monthDay = timeText.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2})\b/i);
+  const clock = timeText.match(/\bat\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/i);
+  if (!clock) return null;
+
+  const months: Record<string, number> = {
+    jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+    jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+  };
+  const month = monthDay ? months[monthDay[1].slice(0, 3).toLowerCase()] : (monthFromHref ? monthFromHref - 1 : null);
+  const day = monthDay ? Number(monthDay[2]) : dayFromHref;
+  if (month == null || !day) return null;
+
+  let hour = Number(clock[1]);
+  const minute = Number(clock[2] || 0);
+  const meridiem = clock[3].toLowerCase();
+  if (meridiem === 'pm' && hour !== 12) hour += 12;
+  if (meridiem === 'am' && hour === 12) hour = 0;
+
+  // Notre Dame is in Eastern Time. Store an unambiguous ISO instant by using a
+  // fixed EDT offset during the normal event season; downstream normalization
+  // can refine DST handling with a timezone-aware parser before production.
+  const localIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00-04:00`;
+  const parsed = new Date(localIso);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
 
 export const extractNotreDameEvents: HtmlExtractor = (html, pageUrl): ExtractedHtmlEvent[] => {
   const eventBlocks = [
@@ -11,12 +49,12 @@ export const extractNotreDameEvents: HtmlExtractor = (html, pageUrl): ExtractedH
 
   for (const block of eventBlocks) {
     const title = firstMatch(block, /<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>/i) || firstMatch(block, /class=["'][^"']*(?:event-title|title)[^"']*["'][^>]*>([\s\S]*?)<\//i);
-    const href = absoluteUrl(pageUrl, firstHref(block));
-    const date = firstMatch(block, /(?:class=["'][^"']*(?:date|event-date)[^"']*["'][^>]*>|<time[^>]*>)([\s\S]*?)(?:<\/time>|<\/[^>]+>)/i);
-    const time = firstMatch(block, /class=["'][^"']*(?:time|event-time)[^"']*["'][^>]*>([\s\S]*?)<\//i);
-    const location = firstMatch(block, /class=["'][^"']*(?:location|venue)[^"']*["'][^>]*>([\s\S]*?)<\//i);
+    const href = absoluteUrl(pageUrl, firstHref(block, /\/events\/\d{4}\/\d{2}\/\d{2}\//i) || firstHref(block));
+    const timeText = firstMatch(block, /class=["'][^"']*event-time[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i);
+    const location = firstMatch(block, /class=["'][^"']*event-location[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i)
+      || firstMatch(block, /class=["'][^"']*(?:location|venue)[^"']*["'][^>]*>([\s\S]*?)<\//i);
     const text = stripTags(block);
-    const start = date ? parseLocalDateTime(date, time) : null;
+    const start = parseNotreDameStart(timeText, href);
     if (!title || !href || !start) continue;
     const externalId = new URL(href).pathname.replace(/\/$/, '') || href;
     if (seen.has(externalId)) continue;
