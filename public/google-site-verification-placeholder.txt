@@ -1,0 +1,1 @@
+Google Search Console verification token has not yet been issued. Add the real verification file or meta tag after Search Console provides it.
