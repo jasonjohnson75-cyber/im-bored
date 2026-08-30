@@ -10,6 +10,7 @@ on:
     paths:
       - 'source-engine/**'
       - 'package.json'
+      - '.github/workflows/source-engine-tests.yml'
 
 jobs:
   fixture-tests:
@@ -19,6 +20,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
       - run: npm install
       - run: npm run test:source-engine
