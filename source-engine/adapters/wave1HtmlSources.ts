@@ -1,7 +1,10 @@
 import type { AdapterContext, AdapterResult, EventSourceAdapter } from '../types';
 import { createStructuredHtmlAdapter, type HtmlExtractor } from './structuredHtml';
+import { extractNotreDameEvents } from '../extractors/notreDame';
+import { extractSouthBendCubsEvents } from '../extractors/southBendCubs';
+import { extractElkhartLibraryEvents } from '../extractors/elkhartLibrary';
 
-export function createNotreDameAdapter(extractor: HtmlExtractor): EventSourceAdapter {
+export function createNotreDameAdapter(extractor: HtmlExtractor = extractNotreDameEvents): EventSourceAdapter {
   return createStructuredHtmlAdapter({
     sourceId: 'notre-dame-events',
     confidence: 94,
@@ -21,7 +24,7 @@ export function createNotreDameAdapter(extractor: HtmlExtractor): EventSourceAda
   });
 }
 
-export function createSouthBendCubsAdapter(extractor: HtmlExtractor): EventSourceAdapter {
+export function createSouthBendCubsAdapter(extractor: HtmlExtractor = extractSouthBendCubsEvents): EventSourceAdapter {
   return createStructuredHtmlAdapter({
     sourceId: 'south-bend-cubs',
     confidence: 96,
@@ -33,7 +36,7 @@ export function createSouthBendCubsAdapter(extractor: HtmlExtractor): EventSourc
   });
 }
 
-export function createElkhartLibraryAdapter(extractor: HtmlExtractor): EventSourceAdapter {
+export function createElkhartLibraryAdapter(extractor: HtmlExtractor = extractElkhartLibraryEvents): EventSourceAdapter {
   return createStructuredHtmlAdapter({
     sourceId: 'elkhart-public-library',
     confidence: 94,
