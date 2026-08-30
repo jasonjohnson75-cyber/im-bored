@@ -1,0 +1,24 @@
+name: Source Quality Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'source-engine/**'
+      - 'package.json'
+      - '.github/workflows/source-quality-validation.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 13 * * *'
+
+jobs:
+  source-quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run test:source-quality
