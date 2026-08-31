@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test:source-engine": "vitest run source-engine/tests/extractors.test.ts",
     "test:live-dry-run": "vitest run source-engine/tests/liveDryRun.test.ts --reporter=verbose",
-    "test:source-quality": "vitest run source-engine/tests/sourceQualityLive.test.ts --reporter=verbose"
+    "test:source-quality": "vitest run source-engine/tests/sourceQualityLive.test.ts --reporter=verbose",
+    "ingest:production": "vite-node source-engine/productionIngest.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
