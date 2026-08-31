@@ -1,1 +1,6 @@
-.city-badge{position:absolute;z-index:3;left:11px;bottom:11px;display:inline-flex;align-items:center;gap:5px;background:rgba(12,35,64,.9);color:#fff;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;letter-spacing:.01em;box-shadow:0 3px 10px rgba(0,0,0,.18);backdrop-filter:blur(4px)}.city-badge svg{flex:0 0 auto}@media(max-width:680px){.city-badge{font-size:10px;padding:5px 8px}}
+.city-badge{position:absolute;z-index:3;left:11px;bottom:11px;display:inline-flex;align-items:center;gap:5px;background:rgba(12,35,64,.9);color:#fff;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:6px 9px;font-size:11px;font-weight:900;letter-spacing:.01em;box-shadow:0 3px 10px rgba(0,0,0,.18);backdrop-filter:blur(4px)}.city-badge svg{flex:0 0 auto}
+
+/* Hero refresh: visual-only override. Navigation, search, categories and links remain unchanged. */
+.brand-hero{background-image:linear-gradient(rgba(255,255,255,.20),rgba(255,255,255,.30)),url('https://south-bend.imgix.net/images/main-images/Mishawaka_Riverwalk_Aerial_51_f4340e5b-39a4-486d-9a6d-3d30079d7bc8.jpg?auto=compress%2Cformat&fit=max&q=80&s=3d0dbaf09af3566e8eec6b4e3de34fbb&w=2560');background-position:center 48%}
+
+@media(max-width:680px){.city-badge{font-size:10px;padding:5px 8px}.brand-hero{background-position:center center}}
