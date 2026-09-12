@@ -5,6 +5,7 @@ import App from './App';
 import './styles.css';
 import './patch.css';
 import './audit-fixes.css';
+import './account-submission.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
