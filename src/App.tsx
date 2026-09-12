@@ -114,7 +114,8 @@ const isInScope = (iso: string | undefined | null, scope: string) => {
   if (!iso) return true;
   const d = new Date(iso),
     now = new Date();
-  if (scope === "TODAY") return localParts(d).key === localParts(now).key;
+  if (scope === "TODAY" || scope === "TONIGHT")
+    return localParts(d).key === localParts(now).key;
   if (scope === "THIS WEEK")
     return d >= now && d <= new Date(now.getTime() + 7 * 86400000);
   const dayMap: any = {
@@ -486,11 +487,16 @@ export default function App() {
               <span>Try:</span>
               <button
                 onClick={() => {
-                  setScope("TODAY");
+                  setScope("TONIGHT");
                   setShowSaved(false);
+                  requestAnimationFrame(() =>
+                    document
+                      .getElementById("results")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+                  );
                 }}
               >
-                Today
+                Tonight
               </button>
               <button
                 onClick={() => {
@@ -556,6 +562,8 @@ export default function App() {
                     : filter ||
                       (scope === "TODAY"
                         ? "Today"
+                        : scope === "TONIGHT"
+                          ? "Tonight"
                         : scope === "THIS WEEK"
                           ? "This Week"
                           : "Weekend")}{" "}
