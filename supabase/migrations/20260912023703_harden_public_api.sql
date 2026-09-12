@@ -1,4 +1,8 @@
 -- Explicit Data API grants. RLS remains the row-level authority.
+revoke execute on function public.advance_source_check(uuid) from public, anon, authenticated;
+revoke execute on function public.expire_old_events() from public, anon, authenticated;
+revoke execute on function public.refresh_source_health() from public, anon, authenticated;
+
 grant usage on schema public to anon, authenticated;
 grant select on public.events, public.venues, public.places to anon, authenticated;
 grant select, insert, update on public.profiles to authenticated;
@@ -25,7 +29,3 @@ alter table public.event_submissions
   drop constraint if exists event_submissions_description_length;
 alter table public.event_submissions
   add constraint event_submissions_description_length check (description is null or char_length(description) <= 2000);
-
--- Nearby events is intentionally public read-only discovery functionality.
-grant execute on function public.nearby_events(double precision, double precision, double precision, timestamptz, timestamptz)
-  to anon, authenticated;
