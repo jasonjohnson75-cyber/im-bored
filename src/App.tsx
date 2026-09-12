@@ -431,39 +431,39 @@ export default function App() {
       <main>
         <section className="brand-hero">
           <div className="hero-overlay">
-            <img
-              className="hero-logo"
-              src="/im-bored-logo.webp"
-              alt="I'm Bored, Find Something Fun to Do"
-            />
-            <div className="location-row">
-              <span>SOUTH BEND</span>
-              <b>•</b>
-              <span>MISHAWAKA</span>
-              <b>•</b>
-              <span>ELKHART</span>
-              <b>•</b>
-              <span>NILES</span>
+            <div className="hero-copy">
+              <span className="hero-eyebrow">
+                <MapPin size={16} /> MICHIANA'S LOCAL GUIDE
+              </span>
+              <h1>
+                <span>I'm bored.</span> Let's fix that.
+              </h1>
+              <p>
+                Discover something worth doing in South Bend, Mishawaka,
+                Elkhart, and Niles.
+              </p>
             </div>
-            <div className="search-bar">
-              <Search size={24} />
-              <label className="sr-only" htmlFor="event-search">
-                Search local activities
-              </label>
-              <input
-                id="event-search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter")
-                    document
-                      .getElementById("results")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                }}
-                placeholder="Search events, concerts, festivals, activities..."
-              />
-              <label className="area-label">
-                <MapPin size={18} />
+            <div className="modern-search-card">
+              <div className="search-input-wrap">
+                <Search size={22} />
+                <label className="sr-only" htmlFor="event-search">
+                  What do you want to do?
+                </label>
+                <input
+                  id="event-search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter")
+                      document
+                        .getElementById("results")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  placeholder="What sounds fun?"
+                />
+              </div>
+              <label className="modern-area-select">
+                <MapPin size={19} />
                 <span className="sr-only">Choose an area</span>
                 <select value={area} onChange={(e) => setArea(e.target.value)}>
                   {areaOptions.map((x) => (
@@ -472,14 +472,49 @@ export default function App() {
                 </select>
               </label>
               <button
-                className="search-button"
+                className="modern-search-button"
                 onClick={() =>
                   document
                     .getElementById("results")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                SEARCH
+                Find something <span>→</span>
+              </button>
+            </div>
+            <div className="hero-quick-links" aria-label="Popular searches">
+              <span>Try:</span>
+              <button
+                onClick={() => {
+                  setScope("TODAY");
+                  setShowSaved(false);
+                }}
+              >
+                Today
+              </button>
+              <button
+                onClick={() => {
+                  setScope("WEEKEND");
+                  setShowSaved(false);
+                }}
+              >
+                This weekend
+              </button>
+              <button
+                onClick={() => {
+                  setFilter("Family");
+                  setShowSaved(false);
+                }}
+              >
+                Family fun
+              </button>
+              <button
+                onClick={() => {
+                  setFilter("Music");
+                  setShowSaved(false);
+                }}
+              >
+                Live music
               </button>
             </div>
           </div>
@@ -797,20 +832,18 @@ function SubmitModal({
     }
     setBusy(true);
     const form = new FormData(event.currentTarget);
-    const { error } = await supabase
-      .from("event_submissions")
-      .insert({
-        submitted_by: session.user.id,
-        title: String(form.get("title")),
-        description: String(form.get("description")),
-        start_time: new Date(String(form.get("start_time"))).toISOString(),
-        venue_name: String(form.get("venue_name")),
-        city: String(form.get("city")),
-        state: String(form.get("state")),
-        source_url: String(form.get("source_url")),
-        contact_email: session.user.email,
-        status: "pending",
-      });
+    const { error } = await supabase.from("event_submissions").insert({
+      submitted_by: session.user.id,
+      title: String(form.get("title")),
+      description: String(form.get("description")),
+      start_time: new Date(String(form.get("start_time"))).toISOString(),
+      venue_name: String(form.get("venue_name")),
+      city: String(form.get("city")),
+      state: String(form.get("state")),
+      source_url: String(form.get("source_url")),
+      contact_email: session.user.email,
+      status: "pending",
+    });
     setBusy(false);
     setNotice(
       error
