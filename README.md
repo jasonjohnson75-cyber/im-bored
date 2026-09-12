@@ -46,4 +46,24 @@ Quick filters: `Free` `Family` `Food` `Music` `Sports` `Date Night` `Arts` `Outd
 - Bolt.new as primary AI builder
 - Cloudflare planned for production hosting
 
-This repository starts with demo data only. No paid APIs are connected yet.
+## Current implementation
+
+- Live Supabase-backed events and local places
+- Today, seven-day, and weekend filters
+- Search, category filters, and city filters
+- Device favorites, with account-ready database policies
+- Moderated event-submission schema
+- Automated ingestion and source-quality workflows
+- Production build and source-engine tests in GitHub Actions
+
+No paid APIs are required for the core experience. Public frontend code uses only a
+Supabase publishable key. Never expose a Supabase secret or service-role key in a
+`VITE_` variable.
+
+## Local verification
+
+```bash
+npm ci
+npm run build
+npm run test:source-engine
+```
