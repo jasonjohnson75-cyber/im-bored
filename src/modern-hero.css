@@ -1,0 +1,214 @@
+.brand-hero {
+  min-height: 560px;
+  padding: 72px 24px 128px;
+  place-items: center start;
+  background-position: center 48% !important;
+}
+.brand-hero:after {
+  background: linear-gradient(
+    90deg,
+    rgba(5, 18, 36, 0.88) 0%,
+    rgba(5, 18, 36, 0.68) 43%,
+    rgba(5, 18, 36, 0.22) 76%,
+    rgba(5, 18, 36, 0.08) 100%
+  ) !important;
+}
+.hero-overlay {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  text-align: left;
+}
+.hero-copy {
+  max-width: 760px;
+  color: #fff;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(9, 28, 52, 0.42);
+  backdrop-filter: blur(8px);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+.hero-copy h1 {
+  margin: 0;
+  max-width: 730px;
+  color: #fff;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+  text-shadow: 0 5px 24px rgba(0, 0, 0, 0.28);
+}
+.hero-copy h1 span {
+  color: #7fc9ff;
+}
+.hero-copy p {
+  margin: 22px 0 32px;
+  max-width: 650px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.5;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+.modern-search-card {
+  width: min(1020px, 100%);
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 220px auto;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(3, 15, 31, 0.38);
+  backdrop-filter: blur(18px);
+}
+.search-input-wrap,
+.modern-area-select {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  color: #617086;
+}
+.search-input-wrap {
+  border-right: 1px solid #dce3ec;
+}
+.search-input-wrap input,
+.modern-area-select select {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #10213f;
+}
+.search-input-wrap input {
+  font-size: 17px;
+}
+.search-input-wrap input::placeholder {
+  color: #7c889a;
+}
+.modern-area-select select {
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.modern-search-button {
+  height: 58px;
+  border: 0;
+  border-radius: 12px;
+  padding: 0 24px;
+  background: linear-gradient(135deg, #1763c5, #123f90);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(23, 78, 166, 0.25);
+}
+.modern-search-button span {
+  font-size: 20px;
+  margin-left: 7px;
+}
+.modern-search-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+.hero-quick-links {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 800;
+}
+.hero-quick-links button {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: rgba(9, 28, 52, 0.48);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.hero-quick-links button:hover {
+  background: #fff;
+  color: #174ea6;
+}
+.modern-search-card:focus-within {
+  outline: 3px solid rgba(127, 201, 255, 0.62);
+  outline-offset: 4px;
+}
+@media (max-width: 800px) {
+  .brand-hero {
+    min-height: 570px;
+    padding: 54px 16px 112px;
+  }
+  .brand-hero:after {
+    background: linear-gradient(
+      180deg,
+      rgba(5, 18, 36, 0.82),
+      rgba(5, 18, 36, 0.52)
+    ) !important;
+  }
+  .hero-overlay {
+    width: 100%;
+  }
+  .hero-copy h1 {
+    font-size: clamp(46px, 13vw, 66px);
+  }
+  .modern-search-card {
+    grid-template-columns: 1fr 1fr;
+  }
+  .search-input-wrap {
+    grid-column: 1/-1;
+    border-right: 0;
+    border-bottom: 1px solid #dce3ec;
+  }
+  .modern-area-select {
+    padding: 0 10px;
+  }
+  .modern-search-button {
+    padding: 0 13px;
+  }
+  .hero-quick-links {
+    margin-bottom: 8px;
+  }
+}
+@media (max-width: 480px) {
+  .brand-hero {
+    min-height: 600px;
+    padding-top: 40px;
+  }
+  .hero-copy p {
+    font-size: 16px;
+    margin: 18px 0 25px;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+  }
+  .modern-search-card {
+    border-radius: 15px;
+  }
+  .modern-area-select select {
+    font-size: 12px;
+  }
+  .modern-search-button {
+    font-size: 11px;
+  }
+  .hero-quick-links button {
+    padding: 7px 10px;
+  }
+}
