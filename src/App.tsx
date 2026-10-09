@@ -302,7 +302,11 @@ export default function App() {
   );
   const visible = useMemo(
     () =>
-      filteredBase.filter((i) => !isEvent(i) || isInScope(i.startTime, scope)),
+      filteredBase.filter((i) =>
+        scope === "TONIGHT"
+          ? isEvent(i) && isInScope(i.startTime, scope)
+          : !isEvent(i) || isInScope(i.startTime, scope),
+      ),
     [filteredBase, scope],
   );
   const fallbackVisible = useMemo(() => {
@@ -656,7 +660,11 @@ export default function App() {
           </div>
           {!loading && !shown.length && (
             <div className="empty-state">
-              <strong>No verified matches for this view yet.</strong>
+              <strong>
+                {scope === "TONIGHT" && !showSaved
+                  ? "No upcoming verified events tonight."
+                  : "No verified matches for this view yet."}
+              </strong>
               <br />
               <button
                 onClick={() => {
@@ -664,9 +672,10 @@ export default function App() {
                   setArea("All Areas");
                   setFilter(null);
                   setShowSaved(false);
+                  setScope("THIS WEEK");
                 }}
               >
-                Clear filters
+                Explore this week
               </button>
             </div>
           )}
