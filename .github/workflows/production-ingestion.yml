@@ -13,18 +13,24 @@ on:
 jobs:
   ingest:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     env:
       SUPABASE_URL: https://vtvxzdvsnjhdkgtgzdxw.supabase.co
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
+      - name: Require ingestion credential
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY is missing. Add it as a GitHub Actions repository secret; ingestion did not run."
+            exit 1
+          fi
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: npm install
+          cache: npm
+      - run: npm ci
       - name: Run production ingestion
-        if: ${{ env.SUPABASE_SERVICE_ROLE_KEY != '' }}
         run: npm run ingest:production
-      - name: Explain skipped ingestion
-        if: ${{ env.SUPABASE_SERVICE_ROLE_KEY == '' }}
-        run: echo 'SUPABASE_SERVICE_ROLE_KEY is not configured; ingestion skipped safely.'
