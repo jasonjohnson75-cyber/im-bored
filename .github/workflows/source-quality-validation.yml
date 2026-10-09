@@ -15,10 +15,23 @@ jobs:
   source-quality:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install
-      - run: npm run test:source-quality
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Validate source extractors against fixtures
+        run: npm run test:source-engine
+      - name: Probe live source availability
+        id: live
+        continue-on-error: true
+        run: npm run test:source-quality
+      - name: Report source availability issue
+        if: ${{ steps.live.outcome == 'failure' }}
+        run: |
+          echo "::warning::A live source was unavailable or returned invalid data. Review the probe log and production adapter_runs before treating this as an ingestion failure."
+          echo "Live source probe failed. Extractor fixture tests passed; check production adapter_runs for source health." >> "$GITHUB_STEP_SUMMARY"
